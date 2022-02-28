@@ -1,0 +1,18 @@
+[
+  {
+    "mgmt": {
+      "mgmtID": 27918,
+      "name": "Essex Property Trust AKA Essex Apartment Homes",
+      "market": "San Francisco",
+      "state": "CA"
+    }
+  },
+  {
+    "mgmt": {
+      "mgmtID": 24736,
+      "name": "Privately Owned and Managed",
+      "market": "San Francisco",
+      "state": "CA"
+    }
+  }
+ ]
