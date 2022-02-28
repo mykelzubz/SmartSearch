@@ -9,11 +9,11 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ElasticController : ControllerBase
+    public class SearchIndexController : ControllerBase
     {
         private IAppService _appService;
 
-        public ElasticController(IAppService appService)
+        public SearchIndexController(IAppService appService)
         {
             _appService = appService;
         }
