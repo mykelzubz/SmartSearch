@@ -19,55 +19,82 @@ namespace Infrastructure.Services
             _client = _config.GetClient();
         }
         
-        public void IndexManagement()
+        public async Task<BulkResponse> IndexManagementAsync(IEnumerable<Mgmt> mgts)
         {
-            try
+
+            if(_client.Indices.Exists("mgmt").Exists)
             {
-            
-                var mgtData = File.ReadAllText("../Infrastructure/Data/SeedData/mgmt.json");
-                var mgts = JsonSerializer.Deserialize<List<MgtObj>>(mgtData);
-
-                // var response = _client.Indices.Create("mgmt2", 
-                //     index => index.Map<List<MgtObj>>(x => x.AutoMap()));
-
-                //var res = _client.IndexDocument(mgts);
-
-                //var res = _client.IndexMany(mgts);
-
-                var mgmtIndexResponse = _client.Bulk(b => b
-                    .Index("mgmt")
-                    .IndexMany(mgts)
-                );
-
-                // var resMgmt = _client.Indices.Delete("mgmt");
-                
+                _client.Indices.Delete("mgmt");
             }
-            catch (Exception ex)
-            {                
-                throw;
-            }
+
+            var mgmtIndexResponse = await _client.BulkAsync(b => b
+                .Index("mgmt")
+                .IndexMany(mgts)
+            );
+
+
+            return mgmtIndexResponse;
+
         }
         
-        public void IndexProperty()
+        public async Task<BulkResponse> IndexPropertyAsync(IEnumerable<Property> properties)
         {
-            try
+            // _client.Indices.Create("smart",
+            //         index => index.Map<Property>(x => x.AutoMap()));
+
+            if(_client.Indices.Exists("prop").Exists)
             {
-            
-                var propData = File.ReadAllText("../Infrastructure/Data/SeedData/properties.json");
-                var props = JsonSerializer.Deserialize<List<PropertyObject>>(propData);
-
-                var propIndexResponse = _client.Bulk(b => b
-                    .Index("prop")
-                    .IndexMany(props)
-                );
-
-                // var resProp = _client.Indices.Delete("prop");
-                
+                _client.Indices.Delete("prop");
             }
-            catch (Exception ex)
-            {                
-                throw;
+
+            var propIndexResponse = await _client.BulkAsync(b => b
+                            .Index("prop")
+                            .IndexMany(properties)
+                        );
+
+
+            return propIndexResponse;
+        }
+        
+        public async Task<string> SearchAsync(SearchQuery searchQuery)
+        {
+            var query = new BoolQuery();
+
+            query.Must = new QueryContainer[] { new MultiMatchQuery
+                {
+                    Query = searchQuery.SearchPhrase,
+                    Fields = Infer.Field("name").And("formerName").And("streetAddress")
+                }
+            };
+
+            if(searchQuery.Markets != null && searchQuery.Markets.Length > 0)
+            {
+                query.Filter = new QueryContainer[] { new MultiMatchQuery
+                { 
+                    Query =  string.Join(" ", searchQuery.Markets),
+                    Fields = Infer.Field("market")
+                }};
             }
+
+
+            var searchResult = await _client.SearchAsync<dynamic>(s => s
+                                    .Size(searchQuery.Limit)
+                                    .AllIndices()
+                                    .Query(c => query)
+                                );               
+
+
+            var resultData = searchResult.Documents?.ToList();
+
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+
+            var jsonData = JsonSerializer.Serialize(resultData, options);
+
+
+            return jsonData;
         }
     }
 }

@@ -4,12 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace Core.Models
-{
-    public class PropertyObject
-    {
-        public Property property { get; set; }
-    }
-    
+{    
     public class Property
     {
         public int propertyID { get; set; }
