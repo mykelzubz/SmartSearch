@@ -13,7 +13,7 @@ namespace Infrastructure.Repositories
         {
             var node = new Uri("{OPEN_SEARCH_URL}");
             var settings = new ConnectionSettings(node);
-            settings.DefaultIndex("prop");
+            settings.DefaultIndex("smart");
             settings.RequestTimeout(TimeSpan.FromSeconds(300));
             settings.PrettyJson();
             settings.BasicAuthentication("{USERNAME}", "{PASSWORD}");
