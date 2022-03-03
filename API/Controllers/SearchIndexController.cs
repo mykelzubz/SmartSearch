@@ -8,7 +8,6 @@ using Core.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-//using System.Text.Json;
 
 namespace API.Controllers
 {
@@ -23,7 +22,7 @@ namespace API.Controllers
             _appService = appService;
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("IndexManagement")]
         public async Task<IActionResult> IndexManagement(IFormFile file)
         {
@@ -72,7 +71,7 @@ namespace API.Controllers
                     
             }
 
-            await _appService.IndexPropertyAsync(properties);
+            var response = await _appService.IndexPropertyAsync(properties);
 
             return Ok();
         }

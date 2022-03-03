@@ -11,23 +11,15 @@ namespace Infrastructure.Repositories
     {
         public ElasticClient GetClient()
         {
-            try
-            {
-                var node = new Uri("https://search-mike-smart-f4xjzhosk6etqx4gaq4m4nu4my.us-east-1.es.amazonaws.com/");
-                var settings = new ConnectionSettings(node);
-                settings.DefaultIndex("prop");
-                settings.RequestTimeout(TimeSpan.FromSeconds(300));
-                settings.PrettyJson();
-                settings.BasicAuthentication("admin", "Michael1");
-                settings.DisableDirectStreaming();
+            var node = new Uri("{OPEN_SEARCH_URL}");
+            var settings = new ConnectionSettings(node);
+            settings.DefaultIndex("prop");
+            settings.RequestTimeout(TimeSpan.FromSeconds(300));
+            settings.PrettyJson();
+            settings.BasicAuthentication("{USERNAME}", "{PASSWORD}");
+            //settings.DisableDirectStreaming();
 
-                return new ElasticClient(settings);
-            }
-            catch (Exception ex)
-            {
-                
-                throw;
-            }
+            return new ElasticClient(settings);
         }
     }
 }
